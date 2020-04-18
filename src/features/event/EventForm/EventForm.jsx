@@ -1,18 +1,33 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Segment, Form, Button } from 'semantic-ui-react';
 
-function EventForm({ cancelFormOpen, createEvent }) {
-  const [state, setState] = useState({
-    title: '',
-    date: '',
-    city: '',
-    venue: '',
-    hostedBy: '',
-  });
+const defaultState = {
+  title: '',
+  date: '',
+  city: '',
+  venue: '',
+  hostedBy: '',
+};
+
+function EventForm(props) {
+  const [state, setState] = useState(defaultState);
+  const { cancelFormOpen, updateEvent, createEvent, selectedEvent } = props;
+
+  useEffect(() => {
+    if (selectedEvent !== null) {
+      setState({ ...selectedEvent });
+    } else {
+      setState(defaultState);
+    }
+  }, [selectedEvent]);
 
   const handleFormSubmit = e => {
     e.preventDefault();
-    createEvent(state);
+    if (state.id) {
+      updateEvent(state);
+    } else {
+      createEvent(state);
+    }
   };
 
   const handleInputChange = ({ target: { name, value } }) => {
