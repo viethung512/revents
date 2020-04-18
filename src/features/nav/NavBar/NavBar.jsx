@@ -1,30 +1,47 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { Link, NavLink, withRouter } from 'react-router-dom';
 import { Menu, Container, Button } from 'semantic-ui-react';
 
-function NavBar(props) {
+// components
+import SignedOutMenu from '../Menus/SignedOutMenu';
+import SignedInMenu from '../Menus/SignedInMenu';
+
+function NavBar({ history }) {
+  const [authenticated, setAuthenticated] = useState(false);
+
+  const handleSignIn = () => setAuthenticated(true);
+  const handleSignOut = () => {
+    setAuthenticated(false);
+    history.push('/');
+  };
+
   return (
     <Menu inverted fixed='top'>
       <Container>
-        <Menu.Item header>
-          <img src='assets/logo.png' alt='logo' />
+        <Menu.Item as={NavLink} to='/' exact header>
+          <img src='/assets/logo.png' alt='logo' />
           Re-vents
         </Menu.Item>
-        <Menu.Item name='Events' />
+        <Menu.Item as={NavLink} to='/events' name='Events' />
+        <Menu.Item as={NavLink} to='/people' name='People' />
         <Menu.Item>
-          <Button floated='right' positive inverted content='Create Event' />
-        </Menu.Item>
-        <Menu.Item position='right'>
-          <Button basic inverted content='Login' />
           <Button
-            basic
+            as={Link}
+            to='/createEvent'
+            floated='right'
+            positive
             inverted
-            content='Sign Out'
-            style={{ marginLeft: '0.5em' }}
+            content='Create Event'
           />
         </Menu.Item>
+        {authenticated ? (
+          <SignedInMenu signOut={handleSignOut} />
+        ) : (
+          <SignedOutMenu signIn={handleSignIn} />
+        )}
       </Container>
     </Menu>
   );
 }
 
-export default NavBar;
+export default withRouter(NavBar);
