@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Grid, Button } from 'semantic-ui-react';
+import cuid from 'cuid';
 
 // components
 import EventList from '../EventList/EventList';
@@ -57,10 +58,21 @@ const eventsFromDashboard = [
 ];
 
 function EventDashboard(props) {
-  const [events] = useState(eventsFromDashboard);
+  const [events, setEvents] = useState(eventsFromDashboard);
   const [isOpen, setIsOpen] = useState(false);
 
   const handleIsOpenToggle = () => setIsOpen(!isOpen);
+
+  const handleCreateEvent = newEvent => {
+    const newEventData = {
+      ...newEvent,
+      id: cuid(),
+      hostPhotoURL: '/assets/user.png',
+    };
+
+    setEvents([...events, newEventData]);
+    setIsOpen(false);
+  };
 
   return (
     <Grid>
@@ -69,7 +81,12 @@ function EventDashboard(props) {
       </Grid.Column>
       <Grid.Column width={6}>
         <Button onClick={handleIsOpenToggle} positive content='Create Event ' />
-        {isOpen && <EventForm cancelFormOpen={handleIsOpenToggle} />}
+        {isOpen && (
+          <EventForm
+            cancelFormOpen={handleIsOpenToggle}
+            createEvent={handleCreateEvent}
+          />
+        )}
       </Grid.Column>
     </Grid>
   );
