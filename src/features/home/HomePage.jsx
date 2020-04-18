@@ -1,4 +1,5 @@
 import React from 'react';
+import { useHistory } from 'react-router-dom';
 import {
   Segment,
   Container,
@@ -8,7 +9,8 @@ import {
   Icon,
 } from 'semantic-ui-react';
 
-function HomePage({ history }) {
+function HomePage(props) {
+  const history = useHistory();
   return (
     <Segment inverted textAlign='center' vertical className='masthead'>
       <Container text>

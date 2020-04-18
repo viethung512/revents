@@ -1,5 +1,11 @@
 import React, { useState, useEffect } from 'react';
+import { useHistory, useParams } from 'react-router-dom';
+import { useSelector, useDispatch } from 'react-redux';
 import { Segment, Form, Button } from 'semantic-ui-react';
+import cuid from 'cuid';
+
+// actions
+import { createEvent, updateEvent } from '../eventActions';
 
 const defaultState = {
   title: '',
@@ -10,23 +16,38 @@ const defaultState = {
 };
 
 function EventForm(props) {
+  const dispatch = useDispatch();
+  const events = useSelector(state => state.events);
   const [state, setState] = useState(defaultState);
-  const { cancelFormOpen, updateEvent, createEvent, selectedEvent } = props;
+  const history = useHistory();
+  const { id } = useParams();
 
   useEffect(() => {
-    if (selectedEvent !== null) {
-      setState({ ...selectedEvent });
+    if (id && events.length > 0) {
+      const event = events.find(e => e.id === id);
+      if (event) {
+        setState({ ...state, ...event });
+      }
     } else {
       setState(defaultState);
     }
-  }, [selectedEvent]);
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [id]);
 
   const handleFormSubmit = e => {
     e.preventDefault();
     if (state.id) {
-      updateEvent(state);
+      dispatch(updateEvent(state));
+      history.goBack();
     } else {
-      createEvent(state);
+      const newEvent = {
+        ...state,
+        id: cuid(),
+        hostPhotoURL: '/assets/user.png',
+      };
+      dispatch(createEvent(newEvent));
+      history.push(`/events`);
     }
   };
 
@@ -89,7 +110,7 @@ function EventForm(props) {
         <Button positive type='submit'>
           Submit
         </Button>
-        <Button onClick={cancelFormOpen} type='button'>
+        <Button onClick={() => history.goBack()} type='button'>
           Cancel
         </Button>
       </Form>

@@ -1,11 +1,12 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { Segment, Item, Icon, List, Button } from 'semantic-ui-react';
 
 // components
 import EventListAttendee from './EventListAttendee';
 
 function EventListItem(props) {
-  const { event, selectedEvent, deleteEvent } = props;
+  const { event, deleteEvent } = props;
   const {
     id,
     title,
@@ -55,8 +56,8 @@ function EventListItem(props) {
           content='Delete'
         />
         <Button
-          onClick={() => selectedEvent(event)}
-          as='a'
+          as={Link}
+          to={`/events/${id}`}
           color='teal'
           floated='right'
           content='View'

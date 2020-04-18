@@ -1,13 +1,14 @@
 import React, { useState } from 'react';
-import { Link, NavLink, withRouter } from 'react-router-dom';
+import { Link, NavLink, withRouter, useHistory } from 'react-router-dom';
 import { Menu, Container, Button } from 'semantic-ui-react';
 
 // components
 import SignedOutMenu from '../Menus/SignedOutMenu';
 import SignedInMenu from '../Menus/SignedInMenu';
 
-function NavBar({ history }) {
+function NavBar(props) {
   const [authenticated, setAuthenticated] = useState(false);
+  let history = useHistory();
 
   const handleSignIn = () => setAuthenticated(true);
   const handleSignOut = () => {
@@ -22,7 +23,7 @@ function NavBar({ history }) {
           <img src='/assets/logo.png' alt='logo' />
           Re-vents
         </Menu.Item>
-        <Menu.Item as={NavLink} to='/events' name='Events' />
+        <Menu.Item as={NavLink} exact to='/events' name='Events' />
         <Menu.Item as={NavLink} to='/people' name='People' />
         <Menu.Item as={NavLink} to='/test' name='Test' />
         <Menu.Item>
