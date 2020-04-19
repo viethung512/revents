@@ -1,6 +1,8 @@
-import React, { useEffect } from 'react';
+/* global google */
+import React, { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { reduxForm, Field, initialize } from 'redux-form';
+import { geocodeByAddress, getLatLng } from 'react-places-autocomplete';
 import {
   composeValidators,
   combineValidators,
@@ -19,6 +21,7 @@ import TextInput from '../../../app/common/form/TextInput';
 import TextArea from '../../../app/common/form/TextArea';
 import SelectInput from '../../../app/common/form/SelectInput';
 import DateInput from '../../../app/common/form/DateInput';
+import PlaceInput from '../../../app/common/form/PlaceInput';
 
 const category = [
   { key: 'drinks', text: 'Drinks', value: 'drinks' },
@@ -43,15 +46,17 @@ const validate = combineValidators({
   date: isRequired('date'),
 });
 
-function EventForm({ handleSubmit, invalid, submitting, pristine }) {
+function EventForm({ handleSubmit, invalid, submitting, pristine, change }) {
   const dispatch = useDispatch();
   const events = useSelector(state => state.events);
   const form = useSelector(state => state.form);
-  console.log(form.eventForm);
-  console.log(invalid, submitting, pristine);
 
   const { id } = useParams();
   const history = useHistory();
+  const [state, setState] = useState({
+    cityLatLng: {},
+    venueLatLng: {},
+  });
 
   useEffect(() => {
     if (id && events.length > 0 && events.find(e => e.id === id)) {
@@ -65,6 +70,7 @@ function EventForm({ handleSubmit, invalid, submitting, pristine }) {
   }, [id]);
 
   const onFormSubmit = values => {
+    values.venueLatLng = state.venueLatLng;
     if (values.id) {
       const updatedEvent = { ...values };
       dispatch(updateEvent(updatedEvent));
@@ -89,6 +95,36 @@ function EventForm({ handleSubmit, invalid, submitting, pristine }) {
     }
   };
 
+  const handleCitySelect = selectedCity => {
+    geocodeByAddress(selectedCity)
+      .then(results => getLatLng(results[0]))
+      .then(latlng => {
+        console.log('go in');
+        setState({
+          ...state,
+          cityLatLng: latlng,
+        });
+      })
+      .then(() => {
+        change('city', selectedCity);
+      })
+      .catch(err => console.log(err));
+  };
+
+  const handleVenueSelect = selectedVenue => {
+    geocodeByAddress(selectedVenue)
+      .then(results => getLatLng(results[0]))
+      .then(latlng => {
+        setState({
+          ...state,
+          venueLatLng: latlng,
+        });
+      })
+      .then(() => {
+        change('venue', selectedVenue);
+      });
+  };
+
   return (
     <Grid>
       <Grid.Column width={10}>
@@ -98,27 +134,44 @@ function EventForm({ handleSubmit, invalid, submitting, pristine }) {
 
             <Field
               name='title'
+              type='text'
               component={TextInput}
               placeholder='Give your event a name'
             />
             <Field
               name='category'
+              type='text'
               component={SelectInput}
               placeholder='What is your event about?'
               options={category}
             />
             <Field
               name='description'
+              type='text'
               component={TextArea}
               rows={3}
               placeholder='Tell us about your event'
             />
             <Header sub color='teal' content='event location details' />
-            <Field name='city' component={TextInput} placeholder='Event City' />
+            <Field
+              name='city'
+              type='text'
+              component={PlaceInput}
+              placeholder='Event City'
+              options={{ types: ['(cities)'] }}
+              onSelect={handleCitySelect}
+            />
             <Field
               name='venue'
-              component={TextInput}
+              type='text'
+              component={PlaceInput}
               placeholder='Event Venue'
+              options={{
+                location: new google.maps.LatLng(state.cityLatLng),
+                radius: 1000,
+                types: ['establishment'],
+              }}
+              onSelect={handleVenueSelect}
             />
             <Field
               name='date'

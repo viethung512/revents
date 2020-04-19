@@ -1,8 +1,22 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Segment, Grid, Icon, Button } from 'semantic-ui-react';
+import EventDetailedMap from './EventDetailedMap';
 
 function EventDetailedInfo({ event }) {
-  const { date, description, venue } = event;
+  const [isMapOpen, setIsMapOpen] = useState(false);
+  const [venueLatLng, setVenueLatLng] = useState({
+    lat: 1,
+    lng: 1,
+  });
+  const { id, date, description, venue } = event;
+
+  useEffect(() => {
+    if (id) {
+      setVenueLatLng(event.venueLatLng);
+    }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [id]);
 
   return (
     <Segment.Group>
@@ -35,10 +49,18 @@ function EventDetailedInfo({ event }) {
             <span>{venue}</span>
           </Grid.Column>
           <Grid.Column width={4}>
-            <Button color='teal' size='tiny' content='Show Map' />
+            <Button
+              color='teal'
+              size='tiny'
+              content={isMapOpen ? 'Hide Map' : 'Show Map'}
+              onClick={() => setIsMapOpen(!isMapOpen)}
+            />
           </Grid.Column>
         </Grid>
       </Segment>
+      {isMapOpen && (
+        <EventDetailedMap lat={venueLatLng.lat} lng={venueLatLng.lng} />
+      )}
     </Segment.Group>
   );
 }
