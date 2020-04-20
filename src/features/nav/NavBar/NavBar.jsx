@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Fragment } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, NavLink, withRouter, useHistory } from 'react-router-dom';
 import { Menu, Container, Button } from 'semantic-ui-react';
@@ -33,18 +33,22 @@ function NavBar(props) {
           Re-vents
         </Menu.Item>
         <Menu.Item as={NavLink} exact to='/events' name='Events' />
-        <Menu.Item as={NavLink} to='/people' name='People' />
-        <Menu.Item as={NavLink} to='/test' name='Test' />
-        <Menu.Item>
-          <Button
-            as={Link}
-            to='/createEvent'
-            floated='right'
-            positive
-            inverted
-            content='Create Event'
-          />
-        </Menu.Item>
+        {authenticated && (
+          <Fragment>
+            <Menu.Item as={NavLink} to='/people' name='People' />
+            <Menu.Item as={NavLink} to='/test' name='Test' />
+            <Menu.Item>
+              <Button
+                as={Link}
+                to='/createEvent'
+                floated='right'
+                positive
+                inverted
+                content='Create Event'
+              />
+            </Menu.Item>
+          </Fragment>
+        )}
         {authenticated ? (
           <SignedInMenu signOut={handleSignOut} user={currentUser} />
         ) : (

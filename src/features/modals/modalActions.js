@@ -5,6 +5,4 @@ export const openModal = (modalType, modalProps) => ({
   payload: { modalType, modalProps },
 });
 
-export const closeModal = () => ({
-  type: MODAL_CLOSE,
-});
+export const closeModal = () => ({ type: MODAL_CLOSE });

@@ -5,16 +5,11 @@ import { Field, reduxForm } from 'redux-form';
 import TextInput from '../../../app/common/form/TextInput';
 
 // actions
-import { closeModal } from '../../modals/modalActions';
 import { login } from '../authActions';
 
 const LoginForm = ({ handleSubmit }) => {
   const dispatch = useDispatch();
-
-  const handleLogin = ({ email, password }) => {
-    dispatch(login({ email }));
-    dispatch(closeModal());
-  };
+  const handleLogin = ({ email, password }) => dispatch(login({ email }));
 
   return (
     <Form error size='large' onSubmit={handleSubmit(handleLogin)}>
