@@ -2,6 +2,7 @@ import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Button } from 'semantic-ui-react';
 import { incrementCounter, decrementCounter } from './testActions';
+import { openModal } from '../modals/modalActions';
 import TestPlaceInput from './TestPlaceInput';
 import SimpleMap from './SimpleMap';
 
@@ -17,7 +18,12 @@ function TestComponent(props) {
       <h1>Test Component</h1>
       <h3>The answer is: {test.data}</h3>
       <Button onClick={handleIncrementCounter} positive content='Increment' />
-      <Button onClick={handleDecrementCounter} positive content='Decrement' />
+      <Button onClick={handleDecrementCounter} negative content='Decrement' />
+      <Button
+        onClick={() => dispatch(openModal('TestModal', { data: 42 }))}
+        color='teal'
+        content='Open Modal'
+      />
       <br />
       <hr />
       <TestPlaceInput />
