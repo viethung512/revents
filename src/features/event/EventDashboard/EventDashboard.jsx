@@ -6,6 +6,7 @@ import EventList from '../EventList/EventList';
 // actions
 import { deleteEvent, loadEvents } from '../eventActions';
 import LoadingComponents from '../../../app/layout/LoadingComponents';
+import EventActivity from '../EventActivity/EventActivity';
 
 function EventDashboard(props) {
   const dispatch = useDispatch();
@@ -31,7 +32,7 @@ function EventDashboard(props) {
             <EventList events={events} deleteEvent={handleDeleteEvent} />
           </Grid.Column>
           <Grid.Column width={6}>
-            <h2>Activity feed</h2>
+            <EventActivity />
           </Grid.Column>
         </Grid>
       )}

@@ -11,10 +11,9 @@ import EventDetailedSidebar from './EventDetailedSidebar';
 function EventDetailedPage({ match }) {
   const events = useSelector(state => state.events);
   const [event, setEvent] = useState({});
+  const { id } = match.params;
 
   useEffect(() => {
-    const { id } = match.params;
-
     if (id && events.length > 0) {
       const currentEvent = events.find(event => event.id === id);
       if (currentEvent) {
@@ -23,7 +22,7 @@ function EventDetailedPage({ match }) {
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [id]);
   return (
     <Grid>
       <Grid.Column width={10}>

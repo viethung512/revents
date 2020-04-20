@@ -1,6 +1,23 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Fragment } from 'react';
 import { Segment, Grid, Icon, Button } from 'semantic-ui-react';
 import EventDetailedMap from './EventDetailedMap';
+import { format, parseISO } from 'date-fns';
+
+const parseDate = date => {
+  if (typeof date === 'string') {
+    return format(parseISO(date), 'EEEE do LLL');
+  }
+
+  return format(date, 'EEEE do LLL');
+};
+
+const parseTime = date => {
+  if (typeof date === 'string') {
+    return format(parseISO(date), 'h:mm a');
+  }
+
+  return format(date, 'h:mm a');
+};
 
 function EventDetailedInfo({ event }) {
   const [isMapOpen, setIsMapOpen] = useState(false);
@@ -36,7 +53,12 @@ function EventDetailedInfo({ event }) {
             <Icon name='calendar' size='large' color='teal' />
           </Grid.Column>
           <Grid.Column width={15}>
-            <span>{date}</span>
+            {date && (
+              <Fragment>
+                <span>{parseDate(date)}</span> at
+                <span>{parseTime(date)}</span>
+              </Fragment>
+            )}
           </Grid.Column>
         </Grid>
       </Segment>

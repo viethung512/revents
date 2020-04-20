@@ -1,9 +1,26 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Segment, Item, Icon, List, Button } from 'semantic-ui-react';
+import { format, parseISO } from 'date-fns';
 
 // components
 import EventListAttendee from './EventListAttendee';
+
+const parseDate = date => {
+  if (typeof date === 'string') {
+    return format(parseISO(date), 'EEEE do LLL');
+  }
+
+  return format(date, 'EEEE do LLL');
+};
+
+const parseTime = date => {
+  if (typeof date === 'string') {
+    return format(parseISO(date), 'h:mm a');
+  }
+
+  return format(date, 'h:mm a');
+};
 
 function EventListItem(props) {
   const { event, deleteEvent } = props;
@@ -34,7 +51,7 @@ function EventListItem(props) {
       </Segment>
       <Segment>
         <span>
-          <Icon name='clock' /> {date} |
+          <Icon name='clock' /> {parseDate(date)} at {parseTime(date)}|
           <Icon name='marker' /> {venue}
         </span>
       </Segment>

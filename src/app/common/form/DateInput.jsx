@@ -18,6 +18,7 @@ function DateInput({
         {...rest}
         placeholderText={placeholder}
         selected={input.value ? new Date(input.value) : null}
+        value={input.value}
         onChange={input.onChange}
         onChangeRaw={e => e.preventDefault()}
         onBlur={input.onBlur}
