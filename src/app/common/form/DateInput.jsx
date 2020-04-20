@@ -7,6 +7,8 @@ function DateInput({
   input,
   width,
   placeholder,
+  dateFormat,
+  timeFormat,
   meta: { touched, error },
   ...rest
 }) {
@@ -19,6 +21,8 @@ function DateInput({
         onChange={input.onChange}
         onChangeRaw={e => e.preventDefault()}
         onBlur={input.onBlur}
+        dateFormat={dateFormat}
+        timeFormat={timeFormat}
       />
       {touched && !!error && (
         <Label basic color='red' pointing>

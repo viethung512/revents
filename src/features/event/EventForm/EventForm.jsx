@@ -70,7 +70,16 @@ function EventForm({ handleSubmit, invalid, submitting, pristine, change }) {
   }, [id]);
 
   const onFormSubmit = values => {
-    values.venueLatLng = state.venueLatLng;
+    // fix venueLatLng value
+    values.venueLatLng = {
+      lat: 51.5118074,
+      lng: -0.12300089999996544,
+    };
+
+    // parse date to string
+    values.date = values.date.toISOString();
+
+    // console.log(values);
     if (values.id) {
       const updatedEvent = { ...values };
       dispatch(updateEvent(updatedEvent));
