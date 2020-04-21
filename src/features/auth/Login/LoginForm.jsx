@@ -1,15 +1,22 @@
 import React from 'react';
 import { useDispatch } from 'react-redux';
-import { Form, Segment, Button } from 'semantic-ui-react';
+import { combineValidators, isRequired } from 'revalidate';
+import { Form, Segment, Button, Label, Divider } from 'semantic-ui-react';
 import { Field, reduxForm } from 'redux-form';
 import TextInput from '../../../app/common/form/TextInput';
 
 // actions
 import { login } from '../authActions';
+import SocialLogin from '../SocialLogin/SocialLogin';
 
-const LoginForm = ({ handleSubmit }) => {
+const validate = combineValidators({
+  email: isRequired('email'),
+  password: isRequired('password'),
+});
+
+const LoginForm = ({ handleSubmit, error, invalid, submitting }) => {
   const dispatch = useDispatch();
-  const handleLogin = ({ email, password }) => dispatch(login({ email }));
+  const handleLogin = values => dispatch(login(values));
 
   return (
     <Form error size='large' onSubmit={handleSubmit(handleLogin)}>
@@ -26,12 +33,24 @@ const LoginForm = ({ handleSubmit }) => {
           type='password'
           placeholder='password'
         />
-        <Button fluid size='large' color='teal'>
+        {error && (
+          <Label basic color='red' style={{ marginBottom: 14, width: '100%' }}>
+            {error}
+          </Label>
+        )}
+        <Button
+          fluid
+          size='large'
+          color='teal'
+          disabled={invalid || submitting}
+        >
           Login
         </Button>
+        <Divider horizontal>Or</Divider>
+        <SocialLogin />
       </Segment>
     </Form>
   );
 };
 
-export default reduxForm({ form: 'loginForm' })(LoginForm);
+export default reduxForm({ form: 'loginForm', validate: validate })(LoginForm);

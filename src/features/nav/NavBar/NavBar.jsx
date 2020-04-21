@@ -1,5 +1,6 @@
 import React, { Fragment } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { useFirebase } from 'react-redux-firebase';
 import { Link, NavLink, withRouter, useHistory } from 'react-router-dom';
 import { Menu, Container, Button } from 'semantic-ui-react';
 
@@ -9,19 +10,22 @@ import SignedInMenu from '../Menus/SignedInMenu';
 
 // actions
 import { openModal } from '../../modals/modalActions';
-import { logout } from '../../auth/authActions';
 
 function NavBar(props) {
   const dispatch = useDispatch();
-  const auth = useSelector(state => state.auth);
-
-  const { authenticated, currentUser } = auth;
+  const firebase = useFirebase();
   let history = useHistory();
+  const {
+    auth: { isLoaded, isEmpty },
+    profile,
+  } = useSelector(state => state.firebase);
+
+  const authenticated = isLoaded && !isEmpty;
 
   const handleSignIn = () => dispatch(openModal('LoginModal'));
   const handleRegister = () => dispatch(openModal('RegisterModal'));
   const handleSignOut = () => {
-    dispatch(logout());
+    firebase.logout();
     history.push('/');
   };
 
@@ -50,7 +54,7 @@ function NavBar(props) {
           </Fragment>
         )}
         {authenticated ? (
-          <SignedInMenu signOut={handleSignOut} user={currentUser} />
+          <SignedInMenu signOut={handleSignOut} profile={profile} />
         ) : (
           <SignedOutMenu signIn={handleSignIn} register={handleRegister} />
         )}

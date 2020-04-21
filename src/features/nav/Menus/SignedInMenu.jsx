@@ -2,11 +2,13 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { Menu, Image, Dropdown } from 'semantic-ui-react';
 
-function SignedInMenu({ signOut, user }) {
+function SignedInMenu({ signOut, profile }) {
+  const { displayName, avatarUrl } = profile;
+
   return (
     <Menu.Item position='right'>
-      <Image avatar spaced='right' src='/assets/user.png' />
-      <Dropdown pointing='top left' text={user.email}>
+      <Image avatar spaced='right' src={avatarUrl || '/assets/user.png'} />
+      <Dropdown pointing='top left' text={displayName}>
         <Dropdown.Menu>
           <Dropdown.Item text='Create Event' icon='plus' />
           <Dropdown.Item text='My Events' icon='calendar' />
