@@ -7,9 +7,10 @@ function EventList(props) {
   const { events, deleteEvent } = props;
   return (
     <Fragment>
-      {events.map((event, index) => (
-        <EventListItem key={index} event={event} deleteEvent={deleteEvent} />
-      ))}
+      {events &&
+        events.map((event, index) => (
+          <EventListItem key={index} event={event} deleteEvent={deleteEvent} />
+        ))}
     </Fragment>
   );
 }

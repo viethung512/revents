@@ -1,25 +1,22 @@
-import React, { useEffect, Fragment } from 'react';
+import React, { Fragment } from 'react';
 import { Grid } from 'semantic-ui-react';
 import { useSelector, useDispatch } from 'react-redux';
 // components
 import EventList from '../EventList/EventList';
 // actions
-import { deleteEvent, loadEvents } from '../eventActions';
+import { deleteEvent } from '../eventActions';
 import LoadingComponents from '../../../app/layout/LoadingComponents';
 import EventActivity from '../EventActivity/EventActivity';
+import { useFirestoreConnect } from 'react-redux-firebase';
 
 function EventDashboard(props) {
   const dispatch = useDispatch();
-  const events = useSelector(state => state.events);
+  const { events } = useSelector(state => state.firestore.ordered);
   const async = useSelector(state => state.async);
 
+  useFirestoreConnect([{ collection: 'events' }]);
+
   const { loading } = async;
-
-  useEffect(() => {
-    dispatch(loadEvents());
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
   const handleDeleteEvent = id => dispatch(deleteEvent(id));
 
   return (
