@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Segment, Image, Item, Header, Button } from 'semantic-ui-react';
-import { format, parseISO } from 'date-fns';
+import { format } from 'date-fns';
 
 const eventImageStyle = {
   filter: 'brightness(30%)',
@@ -16,13 +16,7 @@ const eventImageTextStyle = {
   color: 'white',
 };
 
-const parseDate = date => {
-  if (typeof date === 'string') {
-    return format(parseISO(date), 'EEEE do LLLL');
-  }
-
-  return format(date, 'EEEE do LLLL');
-};
+const parseDate = date => format(date, 'EEEE do LLLL');
 
 function EventDetailedHeader({ event }) {
   const { id, title, category, date, hostedBy } = event;

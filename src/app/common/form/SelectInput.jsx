@@ -2,7 +2,7 @@ import React from 'react';
 import { Form, Label, Select } from 'semantic-ui-react';
 
 function SelectInput({
-  input,
+  input: { value, onChange },
   width,
   type,
   placeholder,
@@ -13,8 +13,14 @@ function SelectInput({
   return (
     <Form.Field error={touched && !!error}>
       <Select
-        value={input.value || null}
-        onChange={(e, data) => input.onChange(data.value)}
+        value={
+          value
+            ? value
+            : Object.prototype.toString.call(value) !== '[object Array]'
+            ? []
+            : null
+        }
+        onChange={(e, data) => onChange(data.value)}
         placeholder={placeholder}
         options={options}
         multiple={multiple}

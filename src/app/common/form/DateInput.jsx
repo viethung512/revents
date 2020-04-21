@@ -4,7 +4,7 @@ import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 
 function DateInput({
-  input,
+  input: { value, onChange, onBlur },
   width,
   placeholder,
   dateFormat,
@@ -17,11 +17,17 @@ function DateInput({
       <DatePicker
         {...rest}
         placeholderText={placeholder}
-        selected={input.value ? new Date(input.value) : null}
-        value={input.value}
-        onChange={input.onChange}
+        selected={
+          value
+            ? Object.prototype.toString.call(value) !== '[object Date]'
+              ? value.toDate()
+              : value
+            : null
+        }
+        value={value}
+        onChange={onChange}
         onChangeRaw={e => e.preventDefault()}
-        onBlur={input.onBlur}
+        onBlur={(e, val) => onBlur(val)}
         dateFormat={dateFormat}
         timeFormat={timeFormat}
       />
