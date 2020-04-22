@@ -8,7 +8,7 @@ import SettingsNav from './SettingsNav';
 // pages
 import BasicPage from './BasicPage';
 import AboutPage from './AboutPage';
-import PhotosPage from './PhotosPage';
+import PhotosPage from './Photos/PhotosPage';
 import AccountPage from './AccountPage';
 
 function SettingsDashboard(props) {

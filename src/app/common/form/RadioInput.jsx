@@ -1,7 +1,7 @@
 import React from 'react';
 import { Form } from 'semantic-ui-react';
 
-function RadioInput({ input, id, witdth, type, label }) {
+function RadioInput({ input, id, width, type, label }) {
   return (
     <Form.Field>
       <div className='ui radio'>
