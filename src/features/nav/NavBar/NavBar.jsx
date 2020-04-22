@@ -15,11 +15,9 @@ function NavBar(props) {
   const dispatch = useDispatch();
   const firebase = useFirebase();
   let history = useHistory();
-  const {
-    auth: { isLoaded, isEmpty },
-    profile,
-  } = useSelector(state => state.firebase);
+  const { auth, profile } = useSelector(state => state.firebase);
 
+  const { isLoaded, isEmpty } = auth;
   const authenticated = isLoaded && !isEmpty;
 
   const handleSignIn = () => dispatch(openModal('LoginModal'));
@@ -54,7 +52,7 @@ function NavBar(props) {
           </Fragment>
         )}
         {authenticated ? (
-          <SignedInMenu signOut={handleSignOut} profile={profile} />
+          <SignedInMenu signOut={handleSignOut} profile={profile} auth={auth} />
         ) : (
           <SignedOutMenu signIn={handleSignIn} register={handleRegister} />
         )}

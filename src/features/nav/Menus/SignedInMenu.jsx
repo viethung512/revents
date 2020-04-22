@@ -2,7 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { Menu, Image, Dropdown } from 'semantic-ui-react';
 
-function SignedInMenu({ signOut, profile }) {
+function SignedInMenu({ signOut, profile, auth }) {
   const { displayName, avatarUrl } = profile;
 
   return (
@@ -13,7 +13,12 @@ function SignedInMenu({ signOut, profile }) {
           <Dropdown.Item text='Create Event' icon='plus' />
           <Dropdown.Item text='My Events' icon='calendar' />
           <Dropdown.Item text='My Network' icon='users' />
-          <Dropdown.Item text='My Profile' icon='user' />
+          <Dropdown.Item
+            text='My Profile'
+            icon='user'
+            as={Link}
+            to={`/profile/${auth.uid}`}
+          />
           <Dropdown.Item
             text='Settings'
             icon='settings'
