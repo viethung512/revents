@@ -1,7 +1,8 @@
 import React, { Fragment } from 'react';
 import { Link } from 'react-router-dom';
-import { Segment, Image, Item, Header, Button } from 'semantic-ui-react';
+import { Segment, Image, Item, Header, Button, Label } from 'semantic-ui-react';
 import { format } from 'date-fns';
+import LazyLoad from 'react-lazyload';
 
 const eventImageStyle = {
   filter: 'brightness(30%)',
@@ -25,16 +26,23 @@ function EventDetailedHeader({
   goingToEvent,
   cancelGoingToEvent,
 }) {
-  const { id, title, category, date, hostedBy } = event;
+  const { id, title, category, date, hostedBy, cancelled } = event;
 
   return (
     <Segment.Group>
       <Segment basic attached='top' style={{ padding: '0' }}>
-        <Image
-          src={`/assets/categoryImages/${category}.jpg`}
-          fluid
-          style={eventImageStyle}
-        />
+        <LazyLoad
+          height={150}
+          placeholder={
+            <Image src='/assets/default.png' fluid style={eventImageStyle} />
+          }
+        >
+          <Image
+            src={`/assets/categoryImages/${category}.jpg`}
+            fluid
+            style={eventImageStyle}
+          />
+        </LazyLoad>
 
         <Segment basic style={eventImageTextStyle}>
           <Item.Group>
@@ -70,7 +78,9 @@ function EventDetailedHeader({
           </Button>
         ) : (
           <Fragment>
-            {isGoing ? (
+            {cancelled ? (
+              <Label color='red'>This event has been cancel</Label>
+            ) : isGoing ? (
               <Button onClick={cancelGoingToEvent}>Cancel My Place</Button>
             ) : (
               <Button color='teal' onClick={goingToEvent}>

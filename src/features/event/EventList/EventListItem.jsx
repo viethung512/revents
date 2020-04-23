@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Fragment } from 'react';
 import { Link } from 'react-router-dom';
 import { Segment, Item, Icon, List, Button, Label } from 'semantic-ui-react';
 import { format } from 'date-fns';
@@ -51,8 +51,13 @@ function EventListItem(props) {
       </Segment>
       <Segment>
         <span>
-          <Icon name='clock' /> {parseDate(date.toDate())} at{' '}
-          {parseTime(date.toDate())}|
+          {date && (
+            <Fragment>
+              <Icon name='clock' /> {parseDate(date.toDate())} at{' '}
+              {parseTime(date.toDate())}
+            </Fragment>
+          )}
+          |
           <Icon name='marker' /> {venue}
         </span>
       </Segment>

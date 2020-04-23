@@ -1,6 +1,7 @@
 import React, { Fragment } from 'react';
 import { Segment, Item, Label } from 'semantic-ui-react';
 import { Link } from 'react-router-dom';
+import LazyLoad from 'react-lazyload';
 
 function EventDetailedSidebar({ attendees }) {
   const isHost = false;
@@ -33,7 +34,15 @@ function EventDetailedSidebar({ attendees }) {
                   </Label>
                 )}
 
-                <Item.Image size='tiny' src={attendee.photoURL} />
+                <LazyLoad
+                  height={150}
+                  placeholder={
+                    <Item.Image size='tiny' src='/assets/user.png' />
+                  }
+                >
+                  <Item.Image size='tiny' src={attendee.photoURL} />
+                </LazyLoad>
+
                 <Item.Content verticalAlign='middle'>
                   <Item.Header as='h3'>
                     <Link to={`/profile/${attendee.id}`}>

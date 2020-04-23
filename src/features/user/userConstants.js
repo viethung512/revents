@@ -1,0 +1,1 @@
+export const FETCH_USER_EVENTS = 'FETCH_USER_EVENTS';

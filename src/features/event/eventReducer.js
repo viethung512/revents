@@ -2,7 +2,8 @@ import {
   CREATE_EVENT,
   UPDATE_EVENT,
   DELETE_EVENT,
-  FETCH_EVENT,
+  FETCH_EVENTS,
+  CLEAR_EVENTS,
 } from './eventConstants';
 
 const initialState = [];
@@ -17,8 +18,10 @@ const eventReducer = (state = initialState, { type, payload }) => {
       );
     case DELETE_EVENT:
       return state.filter(event => event.id !== payload.eventId);
-    case FETCH_EVENT:
+    case FETCH_EVENTS:
       return payload.events;
+    case CLEAR_EVENTS:
+      return [];
     default:
       return state;
   }

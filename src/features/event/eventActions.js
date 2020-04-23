@@ -1,5 +1,12 @@
 import { toastr } from 'react-redux-toastr';
 import { createNewEvent } from '../../app/common/util/helper';
+import firebase from '../../app/config/firebase';
+import { FETCH_EVENTS, CLEAR_EVENTS } from './eventConstants';
+import {
+  asyncActionStart,
+  asyncActionFinish,
+  asyncActionError,
+} from '../async/asyncActions';
 
 export const createEvent = event => async (
   dispatch,
@@ -121,3 +128,45 @@ export const cancelGoingToEvent = event => async (
     toastr.error('Oops', 'Problem signing up to the event');
   }
 };
+
+export const getEventsForDashboard = lastEvent => async (
+  dispatch,
+  getState
+) => {
+  const today = new Date();
+  const firestore = firebase.firestore();
+  const eventsRef = firestore.collection('events');
+
+  try {
+    dispatch(asyncActionStart());
+    let startAfter =
+      lastEvent &&
+      (await firestore.collection('events').doc(lastEvent.id).get());
+    let query;
+
+    lastEvent
+      ? (query = eventsRef
+          .where('date', '>=', today)
+          .orderBy('date')
+          .startAfter(startAfter)
+          .limit(2))
+      : (query = eventsRef.where('date', '>=', today).orderBy('date').limit(2));
+
+    let querySnap = await query.get();
+
+    if (querySnap.docs.length === 0) {
+      dispatch(asyncActionFinish());
+      return;
+    }
+
+    const events = querySnap.docs.map(doc => ({ ...doc.data(), id: doc.id }));
+    dispatch({ type: FETCH_EVENTS, payload: { events } });
+    dispatch(asyncActionFinish());
+    return querySnap;
+  } catch (err) {
+    console.log(err);
+    dispatch(asyncActionError());
+  }
+};
+
+export const clearEvents = () => ({ type: CLEAR_EVENTS });
