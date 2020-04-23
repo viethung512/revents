@@ -1,6 +1,7 @@
 /* global google */
 import React, { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import { useFirestore, useFirestoreConnect } from 'react-redux-firebase';
 import { reduxForm, Field, initialize } from 'redux-form';
 import { geocodeByAddress, getLatLng } from 'react-places-autocomplete';
 import {
@@ -11,10 +12,9 @@ import {
 } from 'revalidate';
 import { useHistory, useParams } from 'react-router-dom';
 import { Segment, Form, Button, Grid, Header } from 'semantic-ui-react';
-import cuid from 'cuid';
 
 // actions
-import { createEvent, updateEvent } from '../eventActions';
+import { createEvent, updateEvent, cancelToggle } from '../eventActions';
 
 // components
 import TextInput from '../../../app/common/form/TextInput';
@@ -47,21 +47,36 @@ const validate = combineValidators({
 });
 
 function EventForm({ handleSubmit, invalid, submitting, pristine, change }) {
+  const firestore = useFirestore();
   const dispatch = useDispatch();
-  const events = useSelector(state => state.events);
-  const form = useSelector(state => state.form);
-
   const { id } = useParams();
+  const form = useSelector(state => state.form);
+  const event = useSelector(({ firestore: { data } }) =>
+    data.event ? { ...data.event, id } : {}
+  );
+
   const history = useHistory();
   const [state, setState] = useState({
     cityLatLng: {},
     venueLatLng: {},
   });
 
+  useFirestoreConnect({
+    collection: 'events',
+    doc: id,
+    storeAs: 'event',
+  });
+
+  const loadEvent = async id => {
+    const loadedEvent = await firestore.get(`/events/${id}`);
+    if (loadedEvent.exists) {
+      dispatch(initialize('eventForm', { ...loadedEvent.data(), id }));
+    }
+  };
+
   useEffect(() => {
-    if (id && events.length > 0 && events.find(e => e.id === id)) {
-      const event = events.find(e => e.id === id);
-      dispatch(initialize('eventForm', { ...event }));
+    if (id) {
+      loadEvent(id);
     } else {
       dispatch(initialize('eventForm', {}));
     }
@@ -69,25 +84,24 @@ function EventForm({ handleSubmit, invalid, submitting, pristine, change }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 
-  const onFormSubmit = values => {
+  const onFormSubmit = async values => {
     // fix venueLatLng value
     values.venueLatLng = {
       lat: 51.5118074,
       lng: -0.12300089999996544,
     };
-    if (values.id) {
-      const updatedEvent = { ...values };
-      dispatch(updateEvent(updatedEvent));
-      history.push(`/events/${updatedEvent.id}`);
-    } else {
-      const newEvent = {
-        ...values,
-        id: cuid(),
-        hostPhotoURL: '/assets/user.png',
-        hostedBy: 'Bob',
-      };
-      dispatch(createEvent(newEvent));
-      history.push(`/events/${newEvent.id}`);
+    try {
+      if (values.id) {
+        const updatedEvent = { ...values };
+        dispatch(updateEvent(updatedEvent));
+        history.push(`/events/${updatedEvent.id}`);
+      } else {
+        const createdEvent = await dispatch(createEvent(values));
+
+        history.push(`/events/${createdEvent.id}`);
+      }
+    } catch (err) {
+      console.log(err);
     }
   };
 
@@ -128,6 +142,9 @@ function EventForm({ handleSubmit, invalid, submitting, pristine, change }) {
         change('venue', selectedVenue);
       });
   };
+
+  const handleCancelToggleEvent = () =>
+    dispatch(cancelToggle(event.cancelled, event.id));
 
   return (
     <Grid>
@@ -196,6 +213,16 @@ function EventForm({ handleSubmit, invalid, submitting, pristine, change }) {
             <Button onClick={onCancel} type='button'>
               Cancel
             </Button>
+            {event.id && (
+              <Button
+                color={event && event.cancelled ? 'green' : 'red'}
+                floated='right'
+                onClick={handleCancelToggleEvent}
+                type='button'
+              >
+                {event && event.cancelled ? 'Reactivate Event' : 'Cancel Event'}
+              </Button>
+            )}
           </Form>
         </Segment>
       </Grid.Column>

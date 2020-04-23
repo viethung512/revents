@@ -13,13 +13,7 @@ function SelectInput({
   return (
     <Form.Field error={touched && !!error}>
       <Select
-        value={
-          value
-            ? value
-            : Object.prototype.toString.call(value) !== '[object Array]'
-            ? []
-            : null
-        }
+        value={value || (multiple ? [] : null)}
         onChange={(e, data) => onChange(data.value)}
         placeholder={placeholder}
         options={options}

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Fragment } from 'react';
 import { Link } from 'react-router-dom';
 import { Segment, Image, Item, Header, Button } from 'semantic-ui-react';
 import { format } from 'date-fns';
@@ -16,9 +16,15 @@ const eventImageTextStyle = {
   color: 'white',
 };
 
-const parseDate = date => format(date, 'EEEE do LLLL');
+const parseDate = date => format(date.toDate(), 'EEEE do LLLL');
 
-function EventDetailedHeader({ event }) {
+function EventDetailedHeader({
+  event,
+  isGoing,
+  isHost,
+  goingToEvent,
+  cancelGoingToEvent,
+}) {
   const { id, title, category, date, hostedBy } = event;
 
   return (
@@ -41,7 +47,15 @@ function EventDetailedHeader({ event }) {
                 />
                 {date && <p>{parseDate(date)}</p>}
                 <p>
-                  Hosted by <strong>{hostedBy}</strong>
+                  Hosted by{' '}
+                  <strong>
+                    <Link
+                      to={`/profile/${event.hostUid}`}
+                      style={{ color: 'white' }}
+                    >
+                      {hostedBy}
+                    </Link>
+                  </strong>
                 </p>
               </Item.Content>
             </Item>
@@ -49,13 +63,22 @@ function EventDetailedHeader({ event }) {
         </Segment>
       </Segment>
 
-      <Segment attached='bottom'>
-        <Button>Cancel My Place</Button>
-        <Button color='teal'>JOIN THIS EVENT</Button>
-
-        <Button color='orange' floated='right' as={Link} to={`/manage/${id}`}>
-          Manage Event
-        </Button>
+      <Segment attached='bottom' clearing>
+        {isHost ? (
+          <Button color='orange' floated='right' as={Link} to={`/manage/${id}`}>
+            Manage Event
+          </Button>
+        ) : (
+          <Fragment>
+            {isGoing ? (
+              <Button onClick={cancelGoingToEvent}>Cancel My Place</Button>
+            ) : (
+              <Button color='teal' onClick={goingToEvent}>
+                JOIN THIS EVENT
+              </Button>
+            )}
+          </Fragment>
+        )}
       </Segment>
     </Segment.Group>
   );

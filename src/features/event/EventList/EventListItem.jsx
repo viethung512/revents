@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Segment, Item, Icon, List, Button } from 'semantic-ui-react';
+import { Segment, Item, Icon, List, Button, Label } from 'semantic-ui-react';
 import { format } from 'date-fns';
 
 // components
@@ -10,17 +10,20 @@ const parseDate = date => format(date, 'EEEE do LLL');
 const parseTime = date => format(date, 'h:mm a');
 
 function EventListItem(props) {
-  const { event, deleteEvent } = props;
+  const { event } = props;
   const {
     id,
     title,
     date,
     description,
     venue,
+    hostUid,
     hostedBy,
     hostPhotoURL,
     attendees,
+    cancelled,
   } = event;
+
   return (
     <Segment.Group>
       <Segment>
@@ -28,10 +31,20 @@ function EventListItem(props) {
           <Item>
             <Item.Image size='tiny' circular src={hostPhotoURL} />
             <Item.Content>
-              <Item.Header as='a'>{title}</Item.Header>
+              <Item.Header as={Link} to={`/events/${id}`}>
+                {title}
+              </Item.Header>
               <Item.Description>
-                Hosted by <a href='#reorie'>{hostedBy}</a>
+                Hosted by <Link to={`/profile/${hostUid}`}>{hostedBy}</Link>
               </Item.Description>
+              {cancelled && (
+                <Label
+                  style={{ top: '-40px' }}
+                  ribbon='right'
+                  color='red'
+                  content='This event has been cancelled'
+                />
+              )}
             </Item.Content>
           </Item>
         </Item.Group>
@@ -53,13 +66,6 @@ function EventListItem(props) {
       </Segment>
       <Segment clearing>
         <span>{description}</span>
-        <Button
-          onClick={() => deleteEvent(id)}
-          as='a'
-          color='red'
-          floated='right'
-          content='Delete'
-        />
         <Button
           as={Link}
           to={`/events/${id}`}

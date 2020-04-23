@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, Fragment } from 'react';
 import { useParams } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { useFirestoreConnect } from 'react-redux-firebase';
@@ -8,12 +8,16 @@ import UserDetailedDescription from './UserDetailedDescription';
 import UserDetailedPhotos from './UserDetailedPhotos';
 import UserDetailedEvents from './UserDetailedEvents';
 import UserDetailedSidebar from './UserDetailedSidebar';
+import LoadingComponents from '../../../app/layout/LoadingComponents';
 
 const UserDetailedPage = () => {
   const { id } = useParams();
   const [user, setUser] = useState({});
   const [photos, setPhotos] = useState([]);
   const firestoreData = useSelector(state => state.firestore.ordered);
+  const requesting = useSelector(state => state.firestore.status.requesting);
+  const auth = useSelector(state => state.firebase.auth);
+
   useFirestoreConnect({
     collection: 'users',
     doc: id,
@@ -35,14 +39,25 @@ const UserDetailedPage = () => {
     }
   }, [firestoreData]);
 
+  const isCurrentUser = auth.uid === id;
+  const loading = Object.values(requesting).some(a => a === true);
+
   return (
     <Grid>
-      <UserDetailedHeader user={user} />
-      <UserDetailedDescription user={user} />
-      <UserDetailedSidebar />
-      {photos && photos.length > 0 && <UserDetailedPhotos photos={photos} />}
+      {loading ? (
+        <LoadingComponents />
+      ) : (
+        <Fragment>
+          <UserDetailedHeader user={user} />
+          <UserDetailedDescription user={user} />
+          <UserDetailedSidebar isCurrentUser={isCurrentUser} />
+          {photos && photos.length > 0 && (
+            <UserDetailedPhotos photos={photos} />
+          )}
 
-      <UserDetailedEvents />
+          <UserDetailedEvents />
+        </Fragment>
+      )}
     </Grid>
   );
 };

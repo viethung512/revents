@@ -1,6 +1,7 @@
 import React from 'react';
 import { Grid, Segment, Item, Header } from 'semantic-ui-react';
 import differenceInYears from 'date-fns/differenceInYears';
+import LazyLoad from 'react-lazyload';
 
 const calculateAge = dateOfBirth => {
   if (!dateOfBirth) {
@@ -17,11 +18,14 @@ function UserDetailedHeader({
       <Segment>
         <Item.Group>
           <Item>
-            <Item.Image
-              avatar
-              size='small'
-              src={avatarUrl || '/assets/user.png'}
-            />
+            <LazyLoad
+              height={150}
+              placeholder={
+                <Item.Image avatar size='small' src='/assets/user.png' />
+              }
+            >
+              <Item.Image avatar size='small' src={avatarUrl} />
+            </LazyLoad>
             <Item.Content verticalAlign='bottom'>
               <Header as='h1'>{displayName}</Header>
               <br />

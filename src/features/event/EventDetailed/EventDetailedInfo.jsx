@@ -1,23 +1,11 @@
 import React, { useState, useEffect, Fragment } from 'react';
 import { Segment, Grid, Icon, Button } from 'semantic-ui-react';
 import EventDetailedMap from './EventDetailedMap';
-import { format, parseISO } from 'date-fns';
+import { format } from 'date-fns';
 
-const parseDate = date => {
-  if (typeof date === 'string') {
-    return format(parseISO(date), 'EEEE do LLL');
-  }
+const parseDate = date => format(date.toDate(), 'EEEE do LLL');
 
-  return format(date, 'EEEE do LLL');
-};
-
-const parseTime = date => {
-  if (typeof date === 'string') {
-    return format(parseISO(date), 'h:mm a');
-  }
-
-  return format(date, 'h:mm a');
-};
+const parseTime = date => format(date.toDate(), 'h:mm a');
 
 function EventDetailedInfo({ event }) {
   const [isMapOpen, setIsMapOpen] = useState(false);
