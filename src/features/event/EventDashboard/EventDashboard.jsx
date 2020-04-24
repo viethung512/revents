@@ -1,4 +1,4 @@
-import React, { Fragment, useEffect, useState } from 'react';
+import React, { Fragment, useEffect, useState, useRef } from 'react';
 import { Grid, Loader } from 'semantic-ui-react';
 import { useSelector, useDispatch } from 'react-redux';
 // components
@@ -7,6 +7,8 @@ import EventList from '../EventList/EventList';
 import LoadingComponents from '../../../app/layout/LoadingComponents';
 import EventActivity from '../EventActivity/EventActivity';
 import { getEventsForDashboard, clearEvents } from '../eventActions';
+import { useFirestoreConnect } from 'react-redux-firebase';
+import { objectToArray } from '../../../app/common/util/helper';
 
 function EventDashboard(props) {
   const dispatch = useDispatch();
@@ -16,6 +18,18 @@ function EventDashboard(props) {
   const [loadingInitial, setLoadingInitial] = useState(true);
   const [loadedEvents, setLoadedEvents] = useState([]);
 
+  const activities = useSelector(({ firestore: { data } }) =>
+    data.activities ? objectToArray(data.activities) : []
+  );
+
+  const contextRef = useRef();
+
+  useFirestoreConnect({
+    collection: 'activity',
+    orderBy: ['timestamp', 'desc'],
+    limit: 5,
+    storeAs: 'activities',
+  });
   useEffect(() => {
     const initEvents = async () => {
       const next = await dispatch(getEventsForDashboard());
@@ -64,20 +78,20 @@ function EventDashboard(props) {
         <Grid>
           <Grid.Column width={10}>
             {events && events.length > 0 ? (
-              <Fragment>
+              <div ref={contextRef}>
                 <EventList
                   events={loadedEvents}
                   loading={loading}
                   moreEvents={moreEvents}
                   getNextEvents={getNextEvents}
                 />
-              </Fragment>
+              </div>
             ) : (
               <p>No event here</p>
             )}
           </Grid.Column>
           <Grid.Column width={6}>
-            <EventActivity />
+            <EventActivity activities={activities} contextRef={contextRef} />
           </Grid.Column>
           <Grid.Column width={10}>
             <Loader active={loading} />
