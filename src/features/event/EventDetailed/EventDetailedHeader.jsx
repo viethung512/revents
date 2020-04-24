@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { Segment, Image, Item, Header, Button, Label } from 'semantic-ui-react';
 import { format } from 'date-fns';
 import LazyLoad from 'react-lazyload';
+import { useSelector } from 'react-redux';
 
 const eventImageStyle = {
   filter: 'brightness(30%)',
@@ -27,6 +28,7 @@ function EventDetailedHeader({
   cancelGoingToEvent,
 }) {
   const { id, title, category, date, hostedBy, cancelled } = event;
+  const { loading } = useSelector(state => state.async);
 
   return (
     <Segment.Group>
@@ -83,7 +85,7 @@ function EventDetailedHeader({
             ) : isGoing ? (
               <Button onClick={cancelGoingToEvent}>Cancel My Place</Button>
             ) : (
-              <Button color='teal' onClick={goingToEvent}>
+              <Button color='teal' onClick={goingToEvent} loading={loading}>
                 JOIN THIS EVENT
               </Button>
             )}

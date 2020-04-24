@@ -114,7 +114,11 @@ const PhotosPage = () => {
 
       <Divider />
 
-      <UserPhotos photos={photos} photoProfile={profile.avatarUrl} />
+      <UserPhotos
+        photos={photos}
+        photoProfile={profile.avatarUrl}
+        loading={loading}
+      />
     </Segment>
   );
 };

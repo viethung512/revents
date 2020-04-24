@@ -51,6 +51,7 @@ function EventForm({ handleSubmit, invalid, submitting, pristine, change }) {
   const dispatch = useDispatch();
   const { id } = useParams();
   const form = useSelector(state => state.form);
+  const { loading } = useSelector(state => state.async);
   const event = useSelector(({ firestore: { data } }) =>
     data.event ? { ...data.event, id } : {}
   );
@@ -207,10 +208,11 @@ function EventForm({ handleSubmit, invalid, submitting, pristine, change }) {
               positive
               type='submit'
               disabled={invalid || submitting || pristine}
+              loading={loading}
             >
               Submit
             </Button>
-            <Button onClick={onCancel} type='button'>
+            <Button onClick={onCancel} type='button' disabled={loading}>
               Cancel
             </Button>
             {event.id && (

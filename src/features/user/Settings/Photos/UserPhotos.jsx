@@ -4,7 +4,7 @@ import { Card, Image, Button, Header } from 'semantic-ui-react';
 import { toastr } from 'react-redux-toastr';
 import { deletePhoto, setMainPhoto } from '../../userActions';
 
-function UserPhotos({ photoProfile, photos }) {
+function UserPhotos({ photoProfile, photos, loading }) {
   const dispatch = useDispatch();
 
   const handleDeletePhoto = photo => {
@@ -42,6 +42,7 @@ function UserPhotos({ photoProfile, photos }) {
                   basic
                   color='green'
                   onClick={() => handleSetMainPhoto(photo)}
+                  loading={loading}
                 >
                   Main
                 </Button>
