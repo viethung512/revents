@@ -170,3 +170,29 @@ export const getEventsForDashboard = lastEvent => async (
 };
 
 export const clearEvents = () => ({ type: CLEAR_EVENTS });
+
+export const addEventComment = (eventId, values, parentId) => async (
+  dispatch,
+  getState,
+  { getFirebase }
+) => {
+  const firebase = getFirebase();
+  const { displayName, avatarUrl } = getState().firebase.profile;
+  const { uid } = firebase.auth().currentUser;
+
+  const newComment = {
+    parentId,
+    displayName,
+    photoURL: avatarUrl || '/assets/user.png',
+    uid,
+    text: values.comment,
+    date: Date.now(),
+  };
+
+  try {
+    await firebase.push(`event_chat/${eventId}`, newComment);
+  } catch (err) {
+    console.log(err);
+    toastr.error('Oops', 'Problem adding comment');
+  }
+};

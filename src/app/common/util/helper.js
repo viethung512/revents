@@ -1,3 +1,5 @@
+import arrayToTree from 'array-to-tree';
+
 export const createNewEvent = (user, photoURL, event) => ({
   ...event,
   hostUid: user.uid,
@@ -27,4 +29,42 @@ export const objectToArray = object => {
   } else {
     return [];
   }
+};
+
+// export const createDataTree = dataset => {
+//   let hashTable = Object.create(null);
+//   dataset.forEach(a => (hashTable[a.id] = { ...a, childNodes: [] }));
+//   let dataTree = [];
+//   dataset.forEach(a => {
+//     if (a.parentId) hashTable[a.parentId].childNodes.push(hashTable[a.id]);
+//     else dataTree.push(hashTable[a.id]);
+//   });
+//   return dataTree;
+// };
+
+// export const createDataTree = dataset => {
+//   return dataset.map(data => {
+//     let childNodes = dataset.filter(
+//       newData => data.key === newData.value.parentId
+//     );
+
+//     return {
+//       ...data,
+//       childNodes: childNodes,
+//     };
+//   });
+// };
+
+export const createDataTree = dataset => {
+  const datasetFormat = dataset.map(data => ({
+    ...data,
+    parentId: data.value.parentId,
+  }));
+
+  const dataTree = arrayToTree(datasetFormat, {
+    customID: 'key',
+    parentProperty: 'parentId',
+  });
+
+  return dataTree;
 };

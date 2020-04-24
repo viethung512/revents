@@ -2,14 +2,18 @@ import React, { Fragment } from 'react';
 import { Grid } from 'semantic-ui-react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useParams } from 'react-router-dom';
-import { useFirestoreConnect } from 'react-redux-firebase';
+import {
+  useFirestoreConnect,
+  useFirebaseConnect,
+  isEmpty,
+} from 'react-redux-firebase';
 
 // components
 import EventDetailedHeader from './EventDetailedHeader';
 import EventDetailedInfo from './EventDetailedInfo';
 import EventDetailedChat from './EventDetailedChat';
 import EventDetailedSidebar from './EventDetailedSidebar';
-import { objectToArray } from '../../../app/common/util/helper';
+import { objectToArray, createDataTree } from '../../../app/common/util/helper';
 import { goingToEvent, cancelGoingToEvent } from '../eventActions';
 import LoadingComponents from '../../../app/layout/LoadingComponents';
 
@@ -22,6 +26,9 @@ function EventDetailedPage() {
   const event = useSelector(({ firestore: { data } }) =>
     data.event ? { ...data.event, id } : {}
   );
+  const eventChat = useSelector(({ firebase: { ordered } }) =>
+    ordered.event_chat ? objectToArray(ordered.event_chat[id]) : []
+  );
   const attendees = useSelector(({ firestore: { data } }) =>
     event.id && event.attendees ? objectToArray(event.attendees) : []
   );
@@ -30,6 +37,8 @@ function EventDetailedPage() {
   );
 
   const isHost = event && event.hostUid === authId;
+
+  useFirebaseConnect(`event_chat/${id}`);
 
   useFirestoreConnect({
     collection: 'events',
@@ -50,6 +59,7 @@ function EventDetailedPage() {
   };
 
   const loading = Object.values(requesting).some(a => a === true);
+  const chatTree = !isEmpty(eventChat) && createDataTree(eventChat);
 
   return (
     <Grid>
@@ -66,7 +76,7 @@ function EventDetailedPage() {
               cancelGoingToEvent={handleCancelGoingToEvent}
             />
             <EventDetailedInfo event={event} />
-            <EventDetailedChat />
+            <EventDetailedChat eventId={id} eventChat={chatTree} />
           </Grid.Column>
           <Grid.Column width={6}>
             <EventDetailedSidebar attendees={attendees} />
