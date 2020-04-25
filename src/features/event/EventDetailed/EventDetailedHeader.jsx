@@ -3,7 +3,8 @@ import { Link } from 'react-router-dom';
 import { Segment, Image, Item, Header, Button, Label } from 'semantic-ui-react';
 import { format } from 'date-fns';
 import LazyLoad from 'react-lazyload';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
+import { openModal } from '../../modals/modalActions';
 
 const eventImageStyle = {
   filter: 'brightness(30%)',
@@ -26,9 +27,13 @@ function EventDetailedHeader({
   isHost,
   goingToEvent,
   cancelGoingToEvent,
+  authenticated,
 }) {
+  const dispatch = useDispatch();
   const { id, title, category, date, hostedBy, cancelled } = event;
   const { loading } = useSelector(state => state.async);
+
+  const handleOpenModal = () => dispatch(openModal('UnauthModal'));
 
   return (
     <Segment.Group>
@@ -80,7 +85,25 @@ function EventDetailedHeader({
           </Button>
         ) : (
           <Fragment>
-            {cancelled ? (
+            {cancelled && <Label color='red'>This event has been cancel</Label>}
+
+            {isGoing && authenticated && (
+              <Button onClick={cancelGoingToEvent}>Cancel My Place</Button>
+            )}
+
+            {!isGoing && authenticated && (
+              <Button color='teal' onClick={goingToEvent} loading={loading}>
+                JOIN THIS EVENT
+              </Button>
+            )}
+
+            {!authenticated && (
+              <Button color='teal' onClick={handleOpenModal} loading={loading}>
+                JOIN THIS EVENT
+              </Button>
+            )}
+
+            {/* {cancelled ? (
               <Label color='red'>This event has been cancel</Label>
             ) : isGoing ? (
               <Button onClick={cancelGoingToEvent}>Cancel My Place</Button>
@@ -88,7 +111,7 @@ function EventDetailedHeader({
               <Button color='teal' onClick={goingToEvent} loading={loading}>
                 JOIN THIS EVENT
               </Button>
-            )}
+            )} */}
           </Fragment>
         )}
       </Segment>

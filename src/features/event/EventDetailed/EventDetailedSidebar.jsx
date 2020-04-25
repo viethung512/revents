@@ -4,8 +4,6 @@ import { Link } from 'react-router-dom';
 import LazyLoad from 'react-lazyload';
 
 function EventDetailedSidebar({ attendees }) {
-  const isHost = false;
-
   return (
     <Fragment>
       <Segment
@@ -24,7 +22,7 @@ function EventDetailedSidebar({ attendees }) {
           {attendees &&
             attendees.map((attendee, index) => (
               <Item style={{ position: 'relative' }} key={index}>
-                {isHost && (
+                {attendee.host && (
                   <Label
                     style={{ position: 'absolute' }}
                     color='orange'

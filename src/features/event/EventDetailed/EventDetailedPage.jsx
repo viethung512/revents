@@ -21,7 +21,9 @@ function EventDetailedPage() {
   const { id } = useParams();
   const dispatch = useDispatch();
 
-  const authId = useSelector(state => state.firebase.auth.uid);
+  const { uid: authId, isLoaded, isEmpty: authIsEmpty } = useSelector(
+    state => state.firebase.auth
+  );
   const requesting = useSelector(state => state.firestore.status.requesting);
   const event = useSelector(({ firestore: { data } }) =>
     data.event ? { ...data.event, id } : {}
@@ -60,6 +62,7 @@ function EventDetailedPage() {
 
   const loading = Object.values(requesting).some(a => a === true);
   const chatTree = !isEmpty(eventChat) && createDataTree(eventChat);
+  const authenticated = isLoaded && !authIsEmpty;
 
   return (
     <Grid>
@@ -74,9 +77,12 @@ function EventDetailedPage() {
               isGoing={isGoing}
               goingToEvent={handleGoingToEvent}
               cancelGoingToEvent={handleCancelGoingToEvent}
+              authenticated={authenticated}
             />
             <EventDetailedInfo event={event} />
-            <EventDetailedChat eventId={id} eventChat={chatTree} />
+            {authenticated && (
+              <EventDetailedChat eventId={id} eventChat={chatTree} />
+            )}
           </Grid.Column>
           <Grid.Column width={6}>
             <EventDetailedSidebar attendees={attendees} />

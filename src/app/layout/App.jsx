@@ -16,6 +16,8 @@ import SettingsDashboard from '../../features/user/Settings/SettingsDashboard';
 import TestComponent from '../../features/testarea/TestComponent';
 import ModalManager from '../../features/modals/ModalManager';
 
+import { UserIsAuthenticated } from '../../features/auth/authWrapper';
+
 function App() {
   return (
     <Fragment>
@@ -29,12 +31,21 @@ function App() {
             <Container className='main'>
               <Route path='/events' component={EventDashboard} exact />
               <Route path='/events/:id' component={EventDetailedPage} />
-              <Route path='/people' component={PeopleDashboard} />
-              <Route path='/profile/:id' component={UserDetailedPage} />
-              <Route path='/settings' component={SettingsDashboard} />
+              <Route
+                path='/people'
+                component={UserIsAuthenticated(PeopleDashboard)}
+              />
+              <Route
+                path='/profile/:id'
+                component={UserIsAuthenticated(UserDetailedPage)}
+              />
+              <Route
+                path='/settings'
+                component={UserIsAuthenticated(SettingsDashboard)}
+              />
               <Route
                 path={['/createEvent', '/manage/:id']}
-                component={EventForm}
+                component={UserIsAuthenticated(EventForm)}
               />
               <Route path='/test' component={TestComponent} />
             </Container>
