@@ -54,6 +54,7 @@ const RegisterForm = ({ handleSubmit, error, invalid, submitting }) => {
             size='large'
             color='teal'
             disabled={invalid || submitting}
+            loading={submitting}
           >
             Register
           </Button>

@@ -1,4 +1,4 @@
-import React, { Fragment } from 'react';
+import React from 'react';
 import { Grid } from 'semantic-ui-react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useParams } from 'react-router-dom';
@@ -16,6 +16,7 @@ import EventDetailedSidebar from './EventDetailedSidebar';
 import { objectToArray, createDataTree } from '../../../app/common/util/helper';
 import { goingToEvent, cancelGoingToEvent } from '../eventActions';
 import LoadingComponents from '../../../app/layout/LoadingComponents';
+import NotFound from '../../../app/layout/NotFound';
 
 function EventDetailedPage() {
   const { id } = useParams();
@@ -32,7 +33,9 @@ function EventDetailedPage() {
     ordered.event_chat ? objectToArray(ordered.event_chat[id]) : []
   );
   const attendees = useSelector(({ firestore: { data } }) =>
-    event.id && event.attendees ? objectToArray(event.attendees) : []
+    event.id && event.attendees
+      ? objectToArray(event.attendees).sort((a, b) => b.joinDate - a.joinDate)
+      : []
   );
   const isGoing = useSelector(({ firestore: { data } }) =>
     attendees && attendees.find(att => att.id === authId) ? true : false
@@ -64,33 +67,33 @@ function EventDetailedPage() {
   const chatTree = !isEmpty(eventChat) && createDataTree(eventChat);
   const authenticated = isLoaded && !authIsEmpty;
 
-  return (
+  const renderResult = loading ? (
+    <LoadingComponents />
+  ) : Object.keys(event).length === 0 ? (
+    <NotFound />
+  ) : (
     <Grid>
-      {loading ? (
-        <LoadingComponents />
-      ) : (
-        <Fragment>
-          <Grid.Column width={10}>
-            <EventDetailedHeader
-              event={event}
-              isHost={isHost}
-              isGoing={isGoing}
-              goingToEvent={handleGoingToEvent}
-              cancelGoingToEvent={handleCancelGoingToEvent}
-              authenticated={authenticated}
-            />
-            <EventDetailedInfo event={event} />
-            {authenticated && (
-              <EventDetailedChat eventId={id} eventChat={chatTree} />
-            )}
-          </Grid.Column>
-          <Grid.Column width={6}>
-            <EventDetailedSidebar attendees={attendees} />
-          </Grid.Column>
-        </Fragment>
-      )}
+      <Grid.Column width={10}>
+        <EventDetailedHeader
+          event={event}
+          isHost={isHost}
+          isGoing={isGoing}
+          goingToEvent={handleGoingToEvent}
+          cancelGoingToEvent={handleCancelGoingToEvent}
+          authenticated={authenticated}
+        />
+        <EventDetailedInfo event={event} />
+        {authenticated && (
+          <EventDetailedChat eventId={id} eventChat={chatTree} />
+        )}
+      </Grid.Column>
+      <Grid.Column width={6}>
+        <EventDetailedSidebar attendees={attendees} />
+      </Grid.Column>
     </Grid>
   );
+
+  return renderResult;
 }
 
 export default EventDetailedPage;

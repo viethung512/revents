@@ -1,5 +1,5 @@
 import React, { Fragment } from 'react';
-import { Route } from 'react-router-dom';
+import { Route, Switch } from 'react-router-dom';
 import { Container } from 'semantic-ui-react';
 
 // components
@@ -17,6 +17,7 @@ import TestComponent from '../../features/testarea/TestComponent';
 import ModalManager from '../../features/modals/ModalManager';
 
 import { UserIsAuthenticated } from '../../features/auth/authWrapper';
+import NotFound from './NotFound';
 
 function App() {
   return (
@@ -29,25 +30,25 @@ function App() {
           <Fragment>
             <NavBar />
             <Container className='main'>
-              <Route path='/events' component={EventDashboard} exact />
-              <Route path='/events/:id' component={EventDetailedPage} />
-              <Route
-                path='/people'
-                component={UserIsAuthenticated(PeopleDashboard)}
-              />
-              <Route
-                path='/profile/:id'
-                component={UserIsAuthenticated(UserDetailedPage)}
-              />
-              <Route
-                path='/settings'
-                component={UserIsAuthenticated(SettingsDashboard)}
-              />
-              <Route
-                path={['/createEvent', '/manage/:id']}
-                component={UserIsAuthenticated(EventForm)}
-              />
-              <Route path='/test' component={TestComponent} />
+              <Switch>
+                <Route path='/events' component={EventDashboard} exact />
+                <Route path='/events/:id' component={EventDetailedPage} />
+                <Route
+                  path='/people'
+                  component={UserIsAuthenticated(PeopleDashboard)}
+                />
+                <Route
+                  path='/profile/:id'
+                  component={UserIsAuthenticated(UserDetailedPage)}
+                />
+                <Route path='/settings' component={SettingsDashboard} />
+                <Route
+                  path={['/createEvent', '/manage/:id']}
+                  component={UserIsAuthenticated(EventForm)}
+                />
+                <Route path='/test' component={TestComponent} />
+                <Route component={NotFound} />
+              </Switch>
             </Container>
           </Fragment>
         )}

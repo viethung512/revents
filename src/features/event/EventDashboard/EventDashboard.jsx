@@ -34,7 +34,7 @@ function EventDashboard(props) {
     const initEvents = async () => {
       const next = await dispatch(getEventsForDashboard());
 
-      if (next && next.docs && next.docs.length > 1) {
+      if (next && next.docs && next.docs.length >= 1) {
         setMoreEvents(true);
         setLoadingInitial(false);
       }

@@ -43,6 +43,7 @@ const LoginForm = ({ handleSubmit, error, invalid, submitting }) => {
           size='large'
           color='teal'
           disabled={invalid || submitting}
+          loading={submitting}
         >
           Login
         </Button>

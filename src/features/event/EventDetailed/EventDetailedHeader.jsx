@@ -85,33 +85,31 @@ function EventDetailedHeader({
           </Button>
         ) : (
           <Fragment>
-            {cancelled && <Label color='red'>This event has been cancel</Label>}
-
-            {isGoing && authenticated && (
-              <Button onClick={cancelGoingToEvent}>Cancel My Place</Button>
-            )}
-
-            {!isGoing && authenticated && (
-              <Button color='teal' onClick={goingToEvent} loading={loading}>
-                JOIN THIS EVENT
-              </Button>
-            )}
-
-            {!authenticated && (
-              <Button color='teal' onClick={handleOpenModal} loading={loading}>
-                JOIN THIS EVENT
-              </Button>
-            )}
-
-            {/* {cancelled ? (
-              <Label color='red'>This event has been cancel</Label>
-            ) : isGoing ? (
-              <Button onClick={cancelGoingToEvent}>Cancel My Place</Button>
+            {cancelled ? (
+              <Label color='red'>This event has been cancelled</Label>
             ) : (
-              <Button color='teal' onClick={goingToEvent} loading={loading}>
-                JOIN THIS EVENT
-              </Button>
-            )} */}
+              <Fragment>
+                {isGoing && authenticated && (
+                  <Button onClick={cancelGoingToEvent}>Cancel My Place</Button>
+                )}
+
+                {!isGoing && authenticated && (
+                  <Button color='teal' onClick={goingToEvent} loading={loading}>
+                    JOIN THIS EVENT
+                  </Button>
+                )}
+
+                {!authenticated && (
+                  <Button
+                    color='teal'
+                    onClick={handleOpenModal}
+                    loading={loading}
+                  >
+                    JOIN THIS EVENT
+                  </Button>
+                )}
+              </Fragment>
+            )}
           </Fragment>
         )}
       </Segment>
