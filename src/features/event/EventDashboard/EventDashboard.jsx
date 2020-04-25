@@ -36,8 +36,8 @@ function EventDashboard(props) {
 
       if (next && next.docs && next.docs.length >= 1) {
         setMoreEvents(true);
-        setLoadingInitial(false);
       }
+      setLoadingInitial(false);
     };
 
     initEvents();
